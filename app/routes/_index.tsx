@@ -63,6 +63,78 @@ interface MangaDexResult {
   data: MangaData[];
 }
 
+interface CoverArt {
+  id: string;
+  type: string;
+  attributes: {
+    description: string;
+    volume: string;
+    fileName: string;
+    locale: string;
+    createdAt: string;
+    updatedAt: string;
+    version: number;
+  };
+  relationships: {
+    id: string;
+    type: string;
+  }[];
+}
+
+interface CoverArtResponse {
+  result: string;
+  response: string;
+  data: CoverArt[];
+  limit: number;
+  offset: number;
+  total: number;
+}
+
+interface Author {
+  id: string;
+  type: string;
+  attributes: AuthorAttributes;
+  relationships: Relationship[];
+}
+
+interface AuthorAttributes {
+  name: string;
+  imageUrl: string | null;
+  biography: Record<string, string>;
+  twitter: string | null;
+  pixiv: string | null;
+  melonBook: string | null;
+  fanBox: string | null;
+  booth: string | null;
+  namicomi?: string | null;
+  nicoVideo: string | null;
+  skeb: string | null;
+  fantia: string | null;
+  tumblr: string | null;
+  youtube: string | null;
+  weibo: string | null;
+  naver: string | null;
+  website: string | null;
+  createdAt: string;
+  updatedAt: string;
+  version: number;
+}
+
+interface Relationship {
+  id: string;
+  type: string;
+}
+
+interface AuthorResponse {
+  result: string;
+  response: string;
+  data: Author[];
+  limit: number;
+  offset: number;
+  total: number;
+}
+
+
 export const loader = async () => {
   const BASE_URL = 'https://api.mangadex.org';
 
@@ -84,7 +156,7 @@ export const loader = async () => {
     //? Cover
 
     const coverRelationship = item.relationships.find(r => r.type === 'cover_art');
-    let coverUrl = `https://placehold.co/600x400/png`;
+    let coverUrl = `https://source.unsplash.com/random`;
 
     if (coverRelationship) {
       const coverResponse = await fetch(`${BASE_URL}/cover/${coverRelationship.id}`);
@@ -94,18 +166,19 @@ export const loader = async () => {
       coverUrl = `https://uploads.mangadex.org/covers/${item.id}/${coverFilename}`;
     }
 
-    //? Tags
+    const tags = item.attributes.tags.map(tag => tag.attributes.name.en);
+    const status = item.attributes.status;
+    const latestChapter = item.attributes.latestUploadedChapter || "Ainda não há capítulos";
 
-    //? Status
-
-    //? Author -> Fetch na API
-
-    //? Caps
-
+    // Pegar Autor
+    
     return {
       id: item.id,
       title: item.attributes.title.en,
       coverUrl,
+      tags,
+      status,
+      latestChapter
     }
   }))
 
@@ -118,10 +191,14 @@ export default function Index() {
   return (
     <main>
       <ul className="grid grid-cols-3">
-        {items.map(({id, title, coverUrl}) => (
+        {items.map(({id, title, coverUrl, tags, status, latestChapter}) => (
           <li key={id}>
             <h2>{title}</h2>
             <img src={coverUrl} alt={title} />
+            <p><strong>Author:</strong> 'authorName'</p>
+            <p><strong>Status:</strong> {status}</p>
+            <p><strong>Latest Chapter:</strong> {latestChapter}</p>
+            <p><strong>Tags:</strong> {tags.join(', ')}</p>
           </li>
         ))}
       </ul>
