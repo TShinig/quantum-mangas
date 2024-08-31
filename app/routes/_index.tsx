@@ -168,7 +168,7 @@ export const loader = async () => {
 
     const tags = item.attributes.tags.map(tag => tag.attributes.name.en);
     const status = item.attributes.status;
-    const latestChapter = item.attributes.latestUploadedChapter || "Ainda não há capítulos";
+    const latestChapter = item.attributes.lastChapter || "Ainda não há capítulos";
 
     // Pegar Autor
     
