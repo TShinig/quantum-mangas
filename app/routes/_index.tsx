@@ -140,9 +140,9 @@ export const loader = async () => {
 
   // BASE_IMAGE_URL 'https://uploads.mangadex.org';
   // https://uploads.mangadex.org/covers/${MANGA_ID}/${COVER_FILENAME}
-	
+
   const response = await fetch(`${BASE_URL}/manga`);
-  const result:MangaDexResult = await response.json();
+  const result: MangaDexResult = await response.json();
 
   /**
     const BASE_AUTHOR = await fetch(`${BASE_URL}/author`);
@@ -151,7 +151,7 @@ export const loader = async () => {
     const BASE_CHAPTER = await fetch(`${BASE_URL}/chapter`);
     const BASE_STATISTICS = await fetch(`${BASE_URL}/statistics`);
   */
-  
+
   const items = await Promise.all(result.data.map(async item => {
     //? Cover
 
@@ -171,7 +171,7 @@ export const loader = async () => {
     const latestChapter = item.attributes.lastChapter || "Ainda não há capítulos";
 
     // Pegar Autor
-    
+
     return {
       id: item.id,
       title: item.attributes.title.en,
@@ -189,16 +189,33 @@ export default function Index() {
   const items = useLoaderData<typeof loader>();
 
   return (
-    <main>
-      <ul className="grid grid-cols-3">
-        {items.map(({id, title, coverUrl, tags, status, latestChapter}) => (
-          <li key={id}>
-            <h2>{title}</h2>
-            <img src={coverUrl} alt={title} />
-            <p><strong>Author:</strong> 'authorName'</p>
-            <p><strong>Status:</strong> {status}</p>
-            <p><strong>Latest Chapter:</strong> {latestChapter}</p>
-            <p><strong>Tags:</strong> {tags.join(', ')}</p>
+    <main className="f">
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {items.map(({ id, title, coverUrl, tags, status, latestChapter }) => (
+          <li
+            key={id}
+            className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
+          >
+            <img
+              src={coverUrl}
+              alt={title}
+              className="w-1/3 h-auto object-cover"
+            />
+            <div className="p-4 w-2/3">
+              <h2 className="text-lg font-semibold mb-2 text-gray-800">{title}</h2>
+              <p className="text-sm text-gray-600 mb-1">
+                <strong>Autor:</strong> 'authorName'
+              </p>
+              <p className="text-sm text-gray-600 mb-1">
+                <strong>Status:</strong> {status}
+              </p>
+              <p className="text-sm text-gray-600 mb-1">
+                <strong>Último Capítulo:</strong> {latestChapter}
+              </p>
+              <p className="text-sm text-gray-600 mb-1">
+                <strong>Tags:</strong> {tags.join(', ')}
+              </p>
+            </div>
           </li>
         ))}
       </ul>
