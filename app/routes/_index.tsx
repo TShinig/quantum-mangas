@@ -139,22 +139,11 @@ export const loader = async () => {
   const BASE_URL = 'https://api.mangadex.org';
 
   // BASE_IMAGE_URL 'https://uploads.mangadex.org';
-  // https://uploads.mangadex.org/covers/${MANGA_ID}/${COVER_FILENAME}
 
   const response = await fetch(`${BASE_URL}/manga`);
   const result: MangaDexResult = await response.json();
 
-  /**
-    const BASE_AUTHOR = await fetch(`${BASE_URL}/author`);
-    const BASE_GROUP = await fetch(`${BASE_URL}/group`);
-    const BASE_COVER = await fetch(`${BASE_URL}/cover`);
-    const BASE_CHAPTER = await fetch(`${BASE_URL}/chapter`);
-    const BASE_STATISTICS = await fetch(`${BASE_URL}/statistics`);
-  */
-
   const items = await Promise.all(result.data.map(async item => {
-    //? Cover
-
     const coverRelationship = item.relationships.find(r => r.type === 'cover_art');
     let coverUrl = `https://source.unsplash.com/random`;
 
@@ -168,14 +157,23 @@ export const loader = async () => {
 
     const tags = item.attributes.tags.map(tag => tag.attributes.name.en);
     const status = item.attributes.status;
-    const latestChapter = item.attributes.lastChapter || "Ainda não há capítulos";
+    const latestChapter = item.attributes.lastChapter || "Não foi encontrado capítulos";
 
-    // Pegar Autor
+    const authorRelationship = item.relationships.find((r) => r.type === 'author');
+    let authorName = 'Desconhecido';
+
+    if (authorRelationship) {
+      const authorResponse = await fetch(`${BASE_URL}/author/${authorRelationship.id}`);
+      const authorResult = await authorResponse.json();
+
+      authorName = authorResult.data.attributes.name;
+    }
 
     return {
       id: item.id,
       title: item.attributes.title.en,
       coverUrl,
+      authorName,
       tags,
       status,
       latestChapter
@@ -189,12 +187,12 @@ export default function Index() {
   const items = useLoaderData<typeof loader>();
 
   return (
-    <main className="f">
+    <main className="f bg-neutral-900">
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-        {items.map(({ id, title, coverUrl, tags, status, latestChapter }) => (
+        {items.map(({ id, title, coverUrl, authorName, tags, status, latestChapter }) => (
           <li
             key={id}
-            className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
+            className="bg-[rgba(47,44,51,0.5)] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
           >
             <img
               src={coverUrl}
@@ -202,17 +200,17 @@ export default function Index() {
               className="w-1/3 h-auto object-cover"
             />
             <div className="p-4 w-2/3">
-              <h2 className="text-lg font-semibold mb-2 text-gray-800">{title}</h2>
-              <p className="text-sm text-gray-600 mb-1">
-                <strong>Autor:</strong> 'authorName'
+              <h2 className="text-lg font-semibold mb-2 text-gray-100">{title}</h2>
+              <p className="text-sm text-gray-300 mb-1">
+                <strong>Autor:</strong> {authorName}
               </p>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-300 mb-1">
                 <strong>Status:</strong> {status}
               </p>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-300 mb-1">
                 <strong>Último Capítulo:</strong> {latestChapter}
               </p>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-300 mb-1">
                 <strong>Tags:</strong> {tags.join(', ')}
               </p>
             </div>
