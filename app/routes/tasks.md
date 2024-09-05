@@ -10,8 +10,8 @@ Este documento detalha as tarefas relacionadas à integração com a API da Mang
 | ------------------ | ----------- | ----------------------------------------------------------------------- |
 | **Pegar Título**   | ✅ Feito     | Implementado no `loader`, exibição correta na interface.                |
 | **Pegar Status**   | ✅ Feito     | Implementado no `loader`, exibição correta na interface.                |
-| **Pegar Autor**    | ❌ Não Feito | Requer implementação para buscar e exibir o nome do autor.              |
-| **Pegar Capítulo** | ❌ Não Feito | Implementar busca e exibição de capítulos usando o endpoint apropriado. |
+| **Pegar Autor**    | ✅ Feito  | Implementado, nome do autor é exibido corretamente.              |
+| **Pegar Capítulo** | ✅ Feito  | Implementado, capítulos são exibidos corretamente. |
 | **Pegar Capa**     | ✅ Feito     | Implementado no `loader`, utilizando a lógica de busca de capa correta. |
 | **Pegar Tags**     | ✅ Feito     | Implementado no `loader`, exibição correta na interface.                |
 
@@ -39,13 +39,4 @@ Este documento detalha as tarefas relacionadas à integração com a API da Mang
 
 ## 🚀 Próximos Passos
 
-1. **Implementar a busca de Autor:**
-   - Atualizar o `loader` para buscar informações do autor usando o endpoint `/author`.
-   - Mapear a resposta para incluir o nome do autor na interface.
-  
-2. **Implementar a exibição de Capítulos:**
-   - Integrar o endpoint `/chapter` para buscar capítulos disponíveis.
-   - Atualizar a interface para exibir a lista de capítulos.
-
-3. **Refinar o Design e Usabilidade:**
-   - Revisar estilos CSS para melhorar a responsividade.
+1. **Nada Por Enquanto**
