@@ -1,5 +1,5 @@
 import { json, type MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { Mangadex } from "~/api/mangadex/index.server";
 
 export const meta: MetaFunction = () => [{ title: "Quantum Mangás" }];
@@ -46,31 +46,32 @@ export default function Index() {
       <main className="f bg-neutral-900">
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {items.map(({ id, title, coverUrl, authorName, tags, status, latestChapter }) => (
-            <li
-              key={id}
-              className="bg-[rgba(47,44,51,0.5)] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
-            >
-              <img
-                src={coverUrl}
-                alt={title}
-                className="w-1/3 h-auto object-cover"
-              />
-              <div className="p-4 w-2/3">
-                <h2 className="text-lg font-semibold mb-2 text-gray-100">{title}</h2>
-                <p className="text-sm text-gray-300 mb-1">
-                  <strong>Autor:</strong> {authorName}
-                </p>
-                <p className="text-sm text-gray-300 mb-1">
-                  <strong>Status:</strong> {status}
-                </p>
-                <p className="text-sm text-gray-300 mb-1">
-                  <strong>Último Capítulo:</strong> {latestChapter}
-                </p>
-                <p className="text-sm text-gray-300 mb-1">
-                  <strong>Tags:</strong> {tags.join(', ')}
-                </p>
-              </div>
-            </li>
+            <Link to={`/obras/${id}`} key={id}>
+              <li
+                className="bg-[rgba(47,44,51,0.5)] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
+              >
+                <img
+                  src={coverUrl}
+                  alt={title}
+                  className="w-1/3 h-auto object-cover"
+                />
+                <div className="p-4 w-2/3">
+                  <h2 className="text-lg font-semibold mb-2 text-gray-100">{title}</h2>
+                  <p className="text-sm text-gray-300 mb-1">
+                    <strong>Autor:</strong> {authorName}
+                  </p>
+                  <p className="text-sm text-gray-300 mb-1">
+                    <strong>Status:</strong> {status}
+                  </p>
+                  <p className="text-sm text-gray-300 mb-1">
+                    <strong>Último Capítulo:</strong> {latestChapter}
+                  </p>
+                  <p className="text-sm text-gray-300 mb-1">
+                    <strong>Tags:</strong> {tags.join(', ')}
+                  </p>
+                </div>
+              </li>
+            </Link>
           ))}
         </ul>
       </main>

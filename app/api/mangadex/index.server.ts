@@ -15,6 +15,8 @@ export function Mangadex() {
       const latestChapter = item.attributes.lastChapter || "Não foi encontrado capítulos";
       const authorId = item.relationships.find((r) => r.type === 'author')?.id;
       const authorName = authorId ? await getAuthor(authorId) : 'Desconhecido';
+      const description = item.attributes.description;
+      const format = item.type;
 
       return {
         ...item,
@@ -23,6 +25,8 @@ export function Mangadex() {
         tags,
         status,
         latestChapter,
+        description,
+        format,
       }
     }));
 
@@ -53,7 +57,6 @@ export function Mangadex() {
       return 'Desconhecido';
     }
   }
-
 
   return {
     getMangas,

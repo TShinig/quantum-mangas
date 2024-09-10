@@ -130,3 +130,40 @@ interface Relationship {
   id: string;
   type: string;
 }
+
+// Mangas
+
+interface ChapterAttributes {
+  volume: string;
+  chapter: string;
+  title: string;
+  translatedLanguage: string;
+  externalUrl: string | null;
+  publishAt: string;
+  readableAt: string;
+  createdAt: string;
+  updatedAt: string;
+  pages: number;
+  version: number;
+}
+
+interface aRelationship {
+  id: string;
+  type: string;
+}
+
+interface Chapter {
+  id: string;
+  type: string;
+  attributes: ChapterAttributes;
+  relationships: Relationship;
+}
+
+interface ChapterResponse {
+  result: string;
+  response: string;
+  data: Chapter[];
+  limit: number;
+  offset: number;
+  total: number;
+}
