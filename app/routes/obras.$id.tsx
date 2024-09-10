@@ -2,85 +2,96 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, useLoaderData } from "@remix-run/react";
 import { Mangadex } from "~/api/mangadex/index.server";
 
-export const loader = async ({params}: LoaderFunctionArgs) => {
-  let chapterId = params.id;
-  // Pegar a API, achar o mangá e passar para link.
-
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const mangaId = params.id;  // Pega o ID do mangá dos parâmetros da URL
+  
   const result = await Mangadex().getMangas();
-  const items = await Promise.all(result.map(async item => {   
-    return {
-      id: item.id,
-      title: item.attributes.title.en,
-      coverUrl: item.coverUrl,
-      authorName: item.authorName,
-      tags: item.tags,
-      status: item.status,
-      latestChapter: item.latestChapter,
-      format: item.format,
-      description: item.description,
-      chapterId,
-    };
-  }))
+  const manga = result.find((item) => item.id === mangaId);
 
-  return json(items);
-}
+  if (!manga) {
+    throw new Error("Manga não encontrado");
+  }
+
+  const chaptersResponse = await fetch(`https://api.mangadex.org/chapter?manga=${mangaId}`);
+  const chaptersData = await chaptersResponse.json();
+
+  const chapters = chaptersData.data.map((chapter: any) => ({
+    id: chapter.id,
+    volume: chapter.attributes.volume,
+    chapter: chapter.attributes.chapter,
+    title: chapter.attributes.title || `Capítulo ${chapter.attributes.chapter}`,
+    publishDate: chapter.attributes.publishAt,
+  }));
+
+  return json({
+    id: manga.id,
+    title: manga.attributes.title.en,
+    coverUrl: manga.coverUrl,
+    authorName: manga.authorName,
+    tags: manga.tags,
+    status: manga.status,
+    latestChapter: manga.latestChapter,
+    format: manga.format,
+    description: manga.description,
+    chapters,
+  });
+};
 
 export default function Page() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <>
-      {data.map(({ coverUrl, title, authorName, status, tags, format, description, chapterId }) => (
-      <div className="bg-neutral-900 min-h-screen text-gray-100">
-          <div className="relative">
-            <img
-              src={coverUrl}
-              alt={title}
-              className="w-full h-[50vh] object-cover"
-            />
-            <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 w-full p-4">
-              <h1 className="text-3xl font-bold">{title}</h1>
-            </div>
-          </div>
-        
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between">
-              <p>
-                <strong>Formato:</strong> {format}
-              </p>
-              <p>
-                <strong>Status:</strong> {status}
-              </p>
-              <p>
-                <strong>Autor:</strong> {authorName}
-              </p>
-            </div>
-            <div>
-              <strong>Tags:</strong> {tags.join(", ")}
-            </div>
-            <div>
-              <strong>Descrição:</strong>
-              <p className="mt-2">{description.pt_br || description.en}</p>
-            </div>
-        </div>
-
-        <div className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Capítulos</h2>
-          <ul className="space-y-2">
-              <li key={chapterId}>
-                <a
-                  href={`/capitulo/${chapterId}`}
-                  className="block bg-neutral-800 hover:bg-neutral-700 p-4 rounded-lg transition-colors"
-                >
-                  <div className="flex justify-between">
-                    <span>{title}</span>
-                  </div>
-                </a>
-              </li>
-          </ul>
+    <div className="bg-neutral-900 min-h-screen text-gray-100">
+      <div className="relative">
+        <img
+          src={data.coverUrl}
+          alt={data.title}
+          className="w-full h-[50vh] object-cover object-[50%_25%]"
+        />
+        <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 w-full p-4">
+          <h1 className="text-3xl font-bold">{data.title}</h1>
         </div>
       </div>
-      ))}
-    </>
-  )
+
+      <div className="p-6 space-y-4">
+        <div className="flex justify-between">
+          <p>
+            <strong>Formato:</strong> {data.format}
+          </p>
+          <p>
+            <strong>Status:</strong> {data.status}
+          </p>
+          <p>
+            <strong>Autor:</strong> {data.authorName}
+          </p>
+        </div>
+        <div>
+          <strong>Tags:</strong> {data.tags.join(", ")}
+        </div>
+        <div>
+          <strong>Descrição:</strong>
+          <p className="mt-2">{data.description.pt_br || data.description.en}</p>
+        </div>
+      </div>
+
+      <div className="p-6">
+        <h2 className="text-2xl font-semibold mb-4">Capítulos</h2>
+        <ul className="space-y-2">
+          {data.chapters.map((chapter:any) => (
+            <li key={chapter.id}>
+              <a
+                href={`/capitulo/${chapter.id}`}
+                className="block bg-neutral-800 hover:bg-neutral-700 p-4 rounded-lg transition-colors"
+              >
+                <div className="flex justify-between">
+                  <span>{chapter.title}</span>
+                  <span>{new Date(chapter.publishDate).toLocaleDateString()}</span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
