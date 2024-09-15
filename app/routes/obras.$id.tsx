@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, useLoaderData } from "@remix-run/react";
+import { json, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { Mangadex } from "~/api/mangadex/index.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const mangaId = params.id;  // Pega o ID do mangá dos parâmetros da URL
+  const mangaId = params.id;
   
   const result = await Mangadex().getMangas();
   const manga = result.find((item) => item.id === mangaId);
@@ -11,8 +11,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!manga) {
     throw new Error("Manga não encontrado");
   }
-
-  const chaptersResponse = await fetch(`https://api.mangadex.org/chapter?manga=${mangaId}`);
+  
+  const chaptersResponse = await fetch(`https://api.mangadex.org/chapter`);
   const chaptersData = await chaptersResponse.json();
 
   const chapters = chaptersData.data.map((chapter: any) => ({
@@ -30,7 +30,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     authorName: manga.authorName,
     tags: manga.tags,
     status: manga.status,
-    latestChapter: manga.latestChapter,
     format: manga.format,
     description: manga.description,
     chapters,
@@ -46,7 +45,7 @@ export default function Page() {
         <img
           src={data.coverUrl}
           alt={data.title}
-          className="w-full h-[50vh] object-cover object-[50%_25%]"
+          className="w-full h-[50vh] object-cover object-[50%_20%]"
         />
         <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 w-full p-4">
           <h1 className="text-3xl font-bold">{data.title}</h1>
@@ -78,20 +77,18 @@ export default function Page() {
         <h2 className="text-2xl font-semibold mb-4">Capítulos</h2>
         <ul className="space-y-2">
           {data.chapters.map((chapter:any) => (
-            <li key={chapter.id}>
-              <a
-                href={`/capitulo/${chapter.id}`}
-                className="block bg-neutral-800 hover:bg-neutral-700 p-4 rounded-lg transition-colors"
-              >
-                <div className="flex justify-between">
-                  <span>{chapter.title}</span>
-                  <span>{new Date(chapter.publishDate).toLocaleDateString()}</span>
-                </div>
-              </a>
-            </li>
+            <Link to={`capitulos/${chapter.id}`} key={chapter.id} className="block bg-neutral-800 hover:bg-neutral-700 p-4 rounded-lg transition-colors">
+              <li>
+                  <div className="flex justify-between">
+                    <span>{chapter.title}</span>
+                    <span>{new Date(chapter.publishDate).toLocaleDateString()}</span>
+                  </div>
+              </li>
+            </Link>
           ))}
         </ul>
       </div>
+      <Outlet />
     </div>
   );
 }

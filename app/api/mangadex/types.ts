@@ -152,7 +152,7 @@ interface aRelationship {
   type: string;
 }
 
-interface Chapter {
+export interface Chapter {
   id: string;
   type: string;
   attributes: ChapterAttributes;
