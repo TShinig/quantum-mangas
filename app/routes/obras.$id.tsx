@@ -44,7 +44,7 @@ export default function Page() {
   const maxLength = 0;
   const toggleExpansion = () => { setIsExpanded(!isExpanded); };
   const description = data.description.pt_br || data.description.en || "Não possui descrição.";
-  const truncatedDescription = description.slice(0, maxLength);
+  const slicedDescription = description.slice(0, maxLength);
 
   return (
     <div className="bg-neutral-900 min-h-screen text-gray-100">
@@ -92,7 +92,7 @@ export default function Page() {
         </div>
         <div>
           <strong>Descrição:</strong> {data.description.pt_br || data.description.en || "Não possui descrição."}
-          {isExpanded ? description : truncatedDescription}
+          {isExpanded ? description : slicedDescription}
           {description.length > maxLength && (
             <>
               {isExpanded ? "" : "..."}{" "}
