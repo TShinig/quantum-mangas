@@ -12,7 +12,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Error("Manga não encontrado");
   }
   
-  const chaptersResponse = await fetch(`https://api.mangadex.org/chapter`);
+  const chaptersResponse = await fetch(`https://api.mangadex.org/chapter?manga=${mangaId}`);
   const chaptersData = await chaptersResponse.json();
 
   const chapters = chaptersData.data.map((chapter: any) => ({

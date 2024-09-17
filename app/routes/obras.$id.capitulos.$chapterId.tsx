@@ -5,9 +5,20 @@ import { json } from "@remix-run/node";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { chapterId } = params;
+  
+  const chapterResponse = await fetch(`https://api.mangadex.org/chapter/${chapterId}`);
+  const chapterData = await chapterResponse.json();
 
-  const response = await fetch(`https://api.mangadex.org/at-home/server/${chapterId}`);
-  const imageData = await response.json();
+  if (!chapterData || chapterData.errors) {
+    throw new Error("Erro ao buscar dados do capítulo");
+  }
+
+  const contentResponse = await fetch(`https://api.mangadex.org/at-home/server/${chapterId}`);
+  const imageData = await contentResponse.json();
+
+  if (!imageData || imageData.result !== "ok") {
+    throw new Error("Erro ao buscar imagens do capítulo");
+  }
 
   const imageUrls = imageData.chapter.data.map((fileName: string) =>
     `${imageData.baseUrl}/data/${imageData.chapter.hash}/${fileName}`
@@ -38,7 +49,7 @@ export default function ChapterFullScreen() {
           <img
             key={index}
             src={url}
-            alt={`Page ${index}`}
+            alt={`Page ${index + 1}`}
             className="w-full h-auto object-cover"
           />
         ))}
