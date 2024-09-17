@@ -27,7 +27,7 @@ export default function Index() {
 
   return (
     <>
-      <nav className="bg-neutral-900 p-4">
+      <nav className="bg-neutral-900 text-gray-100 p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8" />
@@ -36,17 +36,18 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center space-x-12">
-            <a href="#" className="text-gray-300 hover:text-white">Início</a>
-            <a href="#" className="text-gray-300 hover:text-white">Obras</a>
-            <a href="#" className="text-gray-300 hover:text-white">Listas</a>
+            <Link to="/">Inicio</Link>
+            <Link to="/obras">Obras</Link>
+            <Link to="/listas">Listas</Link>
             <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8 rounded-full" />
           </div>
         </div>
       </nav>
+
       <main className="f bg-neutral-900">
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {items.map(({ id, title, coverUrl, authorName, tags, status, latestChapter }) => (
-            <Link to={`/obras/${id}`} key={id}>
+            <Link to={`/manga/${id}`} key={id}>
               <li
                 className="bg-[rgba(47,44,51,0.5)] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex"
               >

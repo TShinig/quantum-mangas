@@ -43,7 +43,7 @@ export default function Page() {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 0;
   const toggleExpansion = () => { setIsExpanded(!isExpanded); };
-  const description = data.description.pt_br || data.description.en || "Não possui descrição.";
+  const description = data.description.en;
   const slicedDescription = description.slice(0, maxLength);
 
   return (
@@ -57,9 +57,9 @@ export default function Page() {
             </div>
           </div>
           <div className="flex items-center space-x-12">
-            <a href="#" className="text-gray-300 hover:text-white">Início</a>
-            <a href="#" className="text-gray-300 hover:text-white">Obras</a>
-            <a href="#" className="text-gray-300 hover:text-white">Listas</a>
+            <Link to="/">Inicio</Link>
+            <Link to="/obras">Obras</Link>
+            <Link to="/listas">Listas</Link>
             <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8 rounded-full" />
           </div>
         </div>
@@ -91,7 +91,8 @@ export default function Page() {
           <strong>Tags:</strong> {data.tags.join(", ")}
         </div>
         <div>
-          <strong>Descrição:</strong> {data.description.pt_br || data.description.en || "Não possui descrição."}
+          <strong>Descrição:</strong>
+          {data.description.pt_br || data.description.en || "Não possui descrição."}
           {isExpanded ? description : slicedDescription}
           {description.length > maxLength && (
             <>
