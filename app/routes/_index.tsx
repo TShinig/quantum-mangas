@@ -67,7 +67,7 @@ export default function Index() {
                     <strong>Último Capítulo:</strong> {latestChapter}
                   </p>
                   <p className="text-sm text-gray-300 mb-1">
-                    <strong>Tags:</strong> {tags.join(', ')}
+                    <strong>Tags:</strong> {tags.slice(0, 3).join(', ')}
                   </p>
                 </div>
               </li>

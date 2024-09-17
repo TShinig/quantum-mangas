@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, Link, Outlet, useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import { Mangadex } from "~/api/mangadex/index.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -39,8 +40,30 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 export default function Page() {
   const data = useLoaderData<typeof loader>();
 
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 0;
+  const toggleExpansion = () => { setIsExpanded(!isExpanded); };
+  const description = data.description.pt_br || data.description.en || "Não possui descrição.";
+  const truncatedDescription = description.slice(0, maxLength);
+
   return (
     <div className="bg-neutral-900 min-h-screen text-gray-100">
+      <nav className="bg-neutral-900 p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8" />
+            <div className="text-white text-lg font-bold">
+              Quantum Mangás
+            </div>
+          </div>
+          <div className="flex items-center space-x-12">
+            <a href="#" className="text-gray-300 hover:text-white">Início</a>
+            <a href="#" className="text-gray-300 hover:text-white">Obras</a>
+            <a href="#" className="text-gray-300 hover:text-white">Listas</a>
+            <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8 rounded-full" />
+          </div>
+        </div>
+      </nav>
       <div className="relative">
         <img
           src={data.coverUrl}
@@ -68,8 +91,19 @@ export default function Page() {
           <strong>Tags:</strong> {data.tags.join(", ")}
         </div>
         <div>
-          <strong>Descrição:</strong>
-          <p className="mt-2">{data.description.pt_br || data.description.en}</p>
+          <strong>Descrição:</strong> {data.description.pt_br || data.description.en || "Não possui descrição."}
+          {isExpanded ? description : truncatedDescription}
+          {description.length > maxLength && (
+            <>
+              {isExpanded ? "" : "..."}{" "}
+              <button
+                onClick={toggleExpansion}
+                className="text-blue-400 ml-2 hover:text-blue-200 transition-colors duration-300 font-semibold underline"
+              >
+                {isExpanded ? "Mostrar menos" : "Mostrar mais"}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
