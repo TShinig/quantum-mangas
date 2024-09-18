@@ -1,7 +1,13 @@
-export interface MangaDexResult {
+export interface MangaDexMangasResult {
   result: string;
   response: string;
   data: MangaData[];
+}
+
+export interface MangaDexMangaResult {
+  result: string;
+  response: string;
+  data: MangaData;
 }
 
 export interface CoverArtResponse {

@@ -1,14 +1,6 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { NavLink, Outlet } from "@remix-run/react";
 
-export const loader = async () => {
-  const txt = 'Obras';
-
-  return txt;
-};
-
-export default function Page() {
-  const data = useLoaderData<typeof loader>();
-  
+export default function layout() {
   return (
     <div className="bg-neutral-900 min-h-screen text-gray-100">
       <nav className="bg-neutral-900 p-4">
@@ -20,17 +12,14 @@ export default function Page() {
             </div>
           </div>
           <div className="flex items-center space-x-12">
-            <Link to="/">Inicio</Link>
-            <Link to="/obras">Obras</Link>
-            <Link to="/listas">Listas</Link>
+            <NavLink to="/" className={({isActive}) => isActive ? "font-bold" : undefined}>Inicio</NavLink>
+            <NavLink to="/obras" className={({isActive}) => isActive ? "font-bold" : undefined}>Obras</NavLink>
+            <NavLink to="/listas" className={({isActive}) => isActive ? "font-bold" : undefined}>Listas</NavLink>
             <img src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png" className="h-8 w-8 rounded-full" />
           </div>
         </div>
       </nav>
-      
-      <div>
-        {data}
-      </div>
+      <Outlet />
     </div>
   )
 }
