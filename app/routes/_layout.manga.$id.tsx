@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, Link, Outlet, useLoaderData } from "@remix-run/react";
+import { json, Link, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { Mangadex } from "~/api/mangadex/index.server";
 

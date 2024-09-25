@@ -1,5 +1,4 @@
 import type { CoverArtResponse, MangaDexMangasResult, MangaDexMangaResult } from "./types";
-import { json } from "@remix-run/react";
 
 export function Mangadex() {
   const BASE_URL = 'https://api.mangadex.org';

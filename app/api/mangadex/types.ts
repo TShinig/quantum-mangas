@@ -28,22 +28,17 @@ export interface AuthorResponse {
   total: number;
 }
 
-interface MangaTag {
+interface MangaData {
   id: string;
   type: string;
-  attributes: {
-    name: {
-      en: string;
-    };
-    description: Record<string, string>;
-    group: string;
-    version: number;
-  };
-  relationships: {
-    id: string,
-    type: string,
-    related?: string,
-  }[];
+  attributes: MangaAttributes;
+  relationships: MangaRelationship[];
+}
+
+interface MangaRelationship {
+  id: string;
+  type: string;
+  related?: string;
 }
 
 interface MangaAttributes {
@@ -71,17 +66,22 @@ interface MangaAttributes {
   latestUploadedChapter: string;
 }
 
-interface MangaRelationship {
+interface MangaTag {
   id: string;
   type: string;
-  related?: string;
-}
-
-interface MangaData {
-  id: string;
-  type: string;
-  attributes: MangaAttributes;
-  relationships: MangaRelationship[];
+  attributes: {
+    name: {
+      en: string;
+    };
+    description: Record<string, string>;
+    group: string;
+    version: number;
+  };
+  relationships: {
+    id: string,
+    type: string,
+    related?: string,
+  }[];
 }
 
 interface CoverArt {
@@ -106,7 +106,7 @@ interface Author {
   id: string;
   type: string;
   attributes: AuthorAttributes;
-  relationships: Relationship[];
+  relationships: AuthorRelationship[];
 }
 
 interface AuthorAttributes {
@@ -132,12 +132,12 @@ interface AuthorAttributes {
   version: number;
 }
 
-interface Relationship {
+interface AuthorRelationship {
   id: string;
   type: string;
 }
 
-// Mangas
+/*
 
 interface ChapterAttributes {
   volume: string;
@@ -153,12 +153,12 @@ interface ChapterAttributes {
   version: number;
 }
 
-interface aRelationship {
+interface ChapterRelationship {
   id: string;
   type: string;
 }
 
-export interface Chapter {
+interface Chapter {
   id: string;
   type: string;
   attributes: ChapterAttributes;
@@ -173,3 +173,4 @@ interface ChapterResponse {
   offset: number;
   total: number;
 }
+*/
