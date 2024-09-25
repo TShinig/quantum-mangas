@@ -14,6 +14,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const chapters = await Mangadex().getChapters(mangaId);
 
   return json({
+    ...manga,
     id: manga.id,
     title: manga.attributes.title.en,
     coverUrl: manga.coverUrl,
