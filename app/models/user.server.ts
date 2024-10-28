@@ -61,3 +61,16 @@ export async function verifyLogin(
 
   return userWithoutPassword;
 }
+
+export async function updateUser(userId: string, updatedData: any) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return await prisma.user.update({
+    where: { id: userId },
+    data: updatedData,
+  });
+}

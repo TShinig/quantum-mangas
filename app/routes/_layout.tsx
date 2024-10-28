@@ -1,65 +1,56 @@
-import { NavLink, Outlet } from "@remix-run/react";
-import { useEffect, useLayoutEffect } from "react";
+import { json, Outlet, useLoaderData } from "@remix-run/react";
+import MobileHeader from "~/components/mobile-header";
+import DefaultHeader from "~/components/default-header";
+import { useEffect, useState } from "react";
+import { getUserId } from "~/session.server";
 
-export default function layout() {
+interface LoaderData {
+  userId: string | undefined;
+}
 
-  function changeTheme(theme?: string) {
-    if (theme) {
-      localStorage.theme = theme;
-    } else {
-      localStorage.removeItem('theme');
-    }
-  }
+export const loader = async ({ request }: { request: Request }) => {
+  const userId = await getUserId(request);
+  return json<LoaderData>({ userId });
+};
+
+export default function Layout() {
+  const [isMobile, setIsMobile] = useState(false);
+  const { userId } = useLoaderData<LoaderData>();
+  const isLoggedIn = Boolean(userId);
 
   useEffect(() => {
-    function checkUserData() {
-      const theme = localStorage.getItem('theme');
+    const updateIsMobile = () => setIsMobile(window.innerWidth < 768);
+    updateIsMobile();
 
-      if(theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-
-    checkUserData();
-    window.addEventListener('storage', checkUserData)
-
-    return () => {
-      window.removeEventListener('storage', checkUserData)
-    }
-  }, [])
-
-return (
-  <div className="bg-neutral-900 min-h-screen text-gray-100">
-    <nav className="bg-white dark:bg-neutral-900 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <img
-            src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png"
-            className="h-8 w-8"
-            alt="Logo"
-          />
-          <div className="text-white text-lg font-bold">
-            Quantum Mangás.
+    window.addEventListener("resize", updateIsMobile);
+    return () => window.removeEventListener("resize", updateIsMobile);
+  }, []);
+  
+  return (
+    <div className="min-h-screen bg-cream text-gray-800 dark:bg-neutral-900 dark:text-gray-100">
+      <header className="bg-cream p-4 shadow dark:bg-neutral-900">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <img
+              src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png"
+              className="h-8 w-8"
+              alt="Logo"
+            />
+            <h1 className="text-lg font-bold text-gray-800 dark:text-white">
+              Quantum Mangás.
+            </h1>
           </div>
+
+          {isMobile ? (
+            <MobileHeader isLoggedIn={isLoggedIn} />
+            ) : (
+            <DefaultHeader isLoggedIn={isLoggedIn} />
+            )}
         </div>
-        <div className="flex items-center space-x-12">
-          <NavLink to="/" className={({ isActive }) => isActive ? "font-bold" : undefined}>Inicio</NavLink>
-          <NavLink to="/obras" className={({ isActive }) => isActive ? "font-bold" : undefined}>Obras</NavLink>
-          <NavLink to="/listas" className={({ isActive }) => isActive ? "font-bold" : undefined}>Listas</NavLink>
-          <img
-            src="https://vulcannovel.com.br/wp-content/uploads/2023/07/capa_vulcan_o_unico_fazendeiro_da_torre.png"
-            className="h-8 w-8 rounded-full"
-            alt="Perfil"
-          />
-        </div>
-      </div>
-      <button onClick={e => changeTheme('light')}>Light</button>
-      <button onClick={e => changeTheme('dark')}>Dark</button>
-      <button onClick={e => changeTheme()}>System</button>
-    </nav>
-    <Outlet />
-  </div>
-)
+      </header>
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
 }
